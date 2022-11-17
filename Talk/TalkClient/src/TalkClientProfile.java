@@ -82,8 +82,8 @@ public class TalkClientProfile extends JFrame{
 		selfChatButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-				//new TalkClientRoom(username, ip_addr, port_no);
-				new TalkClientSelfRoom(username, socket, ois, oos);
+				new TalkClientRoom(username, ip_addr, port_no);
+				//new TalkClientSelfRoom(username, socket, ois, oos);
 			}
 		});
 		selfChatButton.setBounds(65, 471, 50, 50);

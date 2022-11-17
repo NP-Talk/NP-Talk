@@ -1,2 +1,4 @@
 eclipse.preferences.version=1
-encoding/<project>=UTF-8
+encoding//src/ChatMsg.java=MS949
+encoding//src/TalkClientProfile.java=UTF-8
+encoding//src/TalkClientRoom.java=UTF-8

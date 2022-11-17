@@ -50,6 +50,8 @@ public class TalkClientRoom extends JFrame{
 	private JTextPane roomName; // 채팅방 이름 
 	
 	private JTextPane textArea;
+	
+	private 
 
 	// 버튼 이미지
 	private ImageIcon emoImg = new ImageIcon(TalkClientRoom.class.getResource("./img/emoticon.png"));
@@ -86,6 +88,7 @@ public class TalkClientRoom extends JFrame{
 		contentPane.add(scrollPane);
 		
 		textArea = new JTextPane();
+		textArea.setBackground(new Color(147, 208, 250));
 		textArea.setEditable(true);
 		textArea.setFont(new Font("굴림체", Font.PLAIN, 14));
 		
@@ -211,7 +214,10 @@ public class TalkClientRoom extends JFrame{
 							continue;
 						switch (cm.getCode()) {
 						case "200": // chat message
-							AppendText(msg);
+							if(check==true)
+								AppendTextR(msg);
+							else
+								AppendTextL(msg);
 							break;
 						case "300": // Image 첨부
 							AppendText("[" + cm.getId() + "]");
@@ -291,6 +297,36 @@ public class TalkClientRoom extends JFrame{
 			// 끝으로 이동
 			textArea.setCaretPosition(len);
 			textArea.insertIcon(icon);
+		}
+		
+		// 화면에 출력
+		public void AppendTextL(ChatMsg cm) {
+			//textArea.append(msg + "\n");
+			//AppendIcon(icon1);
+			//msg = msg.trim(); // 앞뒤 blank와 \n을 제거한다.
+			FriendLabel f = new FriendLabel(UserName, msg);
+			FriendLabel tl = new FriendLabel(UserName, msg);
+			textArea.setCaretPosition(textArea.getDocument().getLength());
+			textArea.insertComponent(tl);
+			AppendTextL("\n");
+			
+			int len = textArea.getDocument().getLength();
+			textArea.setCaretPosition(len);
+			textArea.replaceSelection(msg + "\n");
+			
+			StyledDocument doc = textArea.getStyledDocument();
+			SimpleAttributeSet left = new SimpleAttributeSet();
+			StyleConstants.setAlignment(left, StyleConstants.ALIGN_LEFT);
+			StyleConstants.setForeground(left, Color.BLACK);
+		    doc.setParagraphAttributes(doc.getLength(), 1, left, false);
+			try {
+				doc.insertString(doc.getLength(), msg+"\n", left );
+			} catch (BadLocationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+
 		}
 
 		// 화면에 출력
