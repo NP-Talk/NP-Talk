@@ -201,10 +201,10 @@ public class TalkServer extends JFrame {
 
 		public void Login() {
 			AppendText("새로운 참가자 " + UserName + " 입장.");
-			WriteOne("Welcome to Java chat server\n");
-			WriteOne(UserName + "님 환영합니다.\n"); // 연결된 사용자에게 정상접속을 알림
-			String msg = "[" + UserName + "]님이 입장 하였습니다.\n";
-			WriteOthers(msg); // 아직 user_vc에 새로 입장한 user는 포함되지 않았다.
+//			WriteOne("Welcome to Java chat server\n");
+//			WriteOne(UserName + "님 환영합니다.\n"); // 연결된 사용자에게 정상접속을 알림
+//			String msg = "[" + UserName + "]님이 입장 하였습니다.\n";
+//			WriteOthers(msg); // 아직 user_vc에 새로 입장한 user는 포함되지 않았다.
 		}
 
 		public void Logout() {
@@ -404,6 +404,8 @@ public class TalkServer extends JFrame {
 						WriteAllObject(cm);
 					} else if(cm.getCode().matches("0")) {
 						
+					} else if(cm.getCode().matches("600")) { // 친구 목록
+						
 					}
 				} catch (IOException e) {
 					AppendText("ois.readObject() error" + e);
@@ -421,6 +423,7 @@ public class TalkServer extends JFrame {
 				} // 바깥 catch문끝
 			} // while
 		} // run
+		
 		/*
 		public void run() {
 			while (true) { // 사용자 접속을 계속해서 받기 위해 while문

@@ -113,8 +113,9 @@ public class TalkClientMain extends JFrame {
 			String ip_addr = "127.0.0.1";
 			String port_no = "30000";
 			//TalkClientList list = new TalkClientList(username, ip_addr, port_no);
-			TalkClientProfile profile = new TalkClientProfile(username, ip_addr, port_no);
+			//TalkClientProfile profile = new TalkClientProfile(username, ip_addr, port_no);
 			//TalkClientRoom room = new TalkClientRoom(username, ip_addr, port_no);
+			ChatMainFrame chatMain = new ChatMainFrame(username, ip_addr, port_no);
 			setVisible(false);
 		}
 	}
