@@ -1,54 +1,104 @@
-import java.awt.Color;
-import java.awt.Image;
-
+import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 
 public class profileFrame extends JPanel {
-	JButton profileBtn;
-	JLabel nameLbl, stateMsgLbl;
-	ImageIcon UserIcon; //유저 프로필 사진
-	String Username, stateMsg; // 유저 이름과 상태 메세지
+	private static final long serialVersionUID = 1L;
+	public ChatMainFrame mainView;
 	
-	public profileFrame(String Username, ImageIcon ProfileIcon) {		
-		setLayout(null);
-		setBackground(Color.PINK);
+	public JPanel contentPane;
+	public JButton UserprofileBtn;
+	public JLabel nameLbl, stateMsgLbl;
+	public JCheckBox checkboxSelect;
+	public ImageIcon UserprofileIcon; //유저 프로필 사진
+	
+	
+	public String Username, UserStatus, UserStatusMsg;
+	public Boolean online = false;
+	
+	private Frame frame;
+	private FileDialog fd;
+	
+	public profileFrame(ChatMainFrame mainView, ImageIcon icon, String Username, String UserStatus, String UserStatusMsg) {
+		contentPane = new JPanel();
+		contentPane.setBorder(null);		
+		contentPane.setLayout(null);
+		contentPane.setBackground(Color.PINK);
+		contentPane.setVisible(true);
 		
-		profileBtn = new JButton("");
-		profileBtn.setBounds(15, 14, 50, 50);
-		profileBtn.setFocusPainted(false);		
-		profileBtn.setBorderPainted(false);	//버튼에 이미지 넣고 이미지만 남기기
-		profileBtn.setContentAreaFilled(false);
-
+		this.Username = Username;
+		this.UserStatus = UserStatus;
+		this.UserStatusMsg = UserStatusMsg;
+		this.UserprofileIcon = icon;
+		this.mainView = mainView;
 		
-		nameLbl = new JLabel("");
+		UserprofileBtn = new JButton("");
+		UserprofileBtn.setBounds(15, 14, 50, 50);
+		UserprofileBtn.setFocusPainted(false);		
+		UserprofileBtn.setBorderPainted(false);	//버튼에 이미지 넣고 이미지만 남기기
+		UserprofileBtn.setContentAreaFilled(false);
+		
+		nameLbl = new JLabel(Username);
 		nameLbl.setBounds(75, 16, 102, 23);
 		
 		stateMsgLbl = new JLabel("");
 		stateMsgLbl.setBounds(75, 40, 102, 21);
 
-		add(profileBtn);
-		add(nameLbl);
-		add(stateMsgLbl);
+		contentPane.add(UserprofileBtn);
+		contentPane.add(nameLbl);
+		contentPane.add(stateMsgLbl);
 		
-		JCheckBox onlineCheckbox = new JCheckBox("");
-		onlineCheckbox.setBounds(189, 27, 21, 23);
-		add(onlineCheckbox);
+		checkboxSelect = new JCheckBox("");
+		checkboxSelect.setBackground(Color.WHITE);
+		checkboxSelect.setBounds(189, 27, 21, 23);
+		contentPane.add(checkboxSelect);
 		
 	}
 
 	public void SetIcon(ChatMsg cm) {
-		UserIcon = cm.getProfile();
-		Image img = UserIcon.getImage().getScaledInstance(profileBtn.getWidth(), profileBtn.getHeight(), Image.SCALE_DEFAULT);
-		profileBtn.setIcon(new ImageIcon(img));
+		UserprofileIcon = cm.getProfile();
+		Image img = UserprofileIcon.getImage().getScaledInstance(UserprofileBtn.getWidth(), UserprofileBtn.getHeight(), Image.SCALE_DEFAULT);
+		UserprofileBtn.setIcon(new ImageIcon(img));
+	}
+
+	public void SetOnline(Boolean online) {
+		this.online = online;
 	}
 	
-	public void SetNameAndState(ChatMsg cm) {
-		
+	public void SetStatusMsg(ChatMsg cm) {
+		UserStatusMsg = cm.UserStatusMsg;
+		stateMsgLbl.setText(UserStatusMsg);
 	}
 	
 	// 친구 프로필 사진 바뀌었을 때
 	public void ChangeFriendProfile(ChatMsg cm) {
 		
 	}
+
+	/*
+	public void SetSelectable(Boolean onoff) {
+		if(online) {
+			checkboxSelect.setIcon(online_notchecked);
+			checkboxSelect.setDisabledIcon(online_notchecked);
+			checkboxSelect.setSelectedIcon(online_checked);
+			nameLbl.setBounds(65, 10, 95, 50);
+			checkboxSelect.setBounds(160, 29, 13, 13);
+		}
+		checkboxSelect.setEnabled(onoff);
+	}
+	*/
+
+	
+	/*클릭 이벤트 리스너*/
+	 class MyActionListener implements ActionListener{
+		  
+		  @Override
+		  public void actionPerformed(ActionEvent e) {
+			   if(e.getSource() == contentPane){
+				   
+			   }
+		   }	  
+	 }
+
 }
 

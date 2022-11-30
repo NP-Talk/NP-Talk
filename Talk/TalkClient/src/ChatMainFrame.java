@@ -21,21 +21,29 @@ public class ChatMainFrame extends JFrame {
 	boolean check = false;
 	
 	//
-	private JPanel contentPane, btnPanel, friendPanel, messagePanel, friendHeader;
-	private JButton frdBtn, msgBtn, moreBtn, frdPlusBtn;
-	private JLabel friendLabel;
-	private JTextPane textPaneFriendList;
+	private ChatMainFrame mainView;
+	private ScrollPane scrollPaneMsgList;
+	private ScrollPane scrollPaneFriendList;
 	
-	private ImageIcon friend_img = new ImageIcon(ChatMainFrame.class.getResource("./img/user.png"));
-	private ImageIcon msg_img = new ImageIcon(ChatMainFrame.class.getResource("./img/msg.png"));
-	private ImageIcon more_img = new ImageIcon(ChatMainFrame.class.getResource("./img/more.png"));
-	private ImageIcon frdPlus_img = new ImageIcon(ChatMainFrame.class.getResource("./img/frdPlus.png"));	
-	private ImageIcon standardProfile = new ImageIcon(ChatMainFrame.class.getResource("./img/standardProfile.png"));
-	private ImageIcon UserIcon;
+	private JPanel contentPane, btnPanel, friendPanel, msgPanel;
+	private JPanel friendHeader, msgHeader;
+	
+	private JButton frdBtn, msgBtn, moreBtn, frdPlusBtn, msgPlusBtn;
+	private JLabel friendLabel, msgLabel;
+	private JTextPane textPaneFriendList, textPaneMsgList;
+	
+	
+	private ImageIcon friend_img = new ImageIcon(ChatMainFrame.class.getResource("./img/user.png")); //친구 버튼
+	private ImageIcon msg_img = new ImageIcon(ChatMainFrame.class.getResource("./img/msg.png")); //메세지 버튼 
+	private ImageIcon more_img = new ImageIcon(ChatMainFrame.class.getResource("./img/more.png")); //더보기 버튼 
+	private ImageIcon frdPlus_img = new ImageIcon(ChatMainFrame.class.getResource("./img/frdPlus.png")); //친구 추가 버튼
+	private ImageIcon msgPlus_img = new ImageIcon(ChatMainFrame.class.getResource("")); //메세지 추가 버튼
+	private ImageIcon standardProfile = new ImageIcon(ChatMainFrame.class.getResource("./img/standardProfile.png")); //기본 프로필 이미지 
+	public ImageIcon UserIcon;
 
-	private ArrayList<HashMap<String, ChatMsg>> FriendLabelHash = new ArrayList<HashMap<String, ChatMsg>>();
-	private ArrayList<String> UserList = new ArrayList<>();
-	public ArrayList<profileFrame> FriendLableList = new ArrayList<profileFrame>();
+//	private ArrayList<HashMap<String, ChatMsg>> FriendLabelHash = new ArrayList<HashMap<String, ChatMsg>>();
+//	private ArrayList<String> UserList = new ArrayList<>();
+//	public ArrayList<profileFrame> FriendLableList = new ArrayList<profileFrame>();
 	
 	/**/
 	public ChatMainFrame(String username, String ip_addr, String port_no) {		
@@ -43,6 +51,7 @@ public class ChatMainFrame extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 394, 630);
 		setVisible(true);
+		mainView = this;
 		
 		//CreateFriendIconHash();
 		
@@ -114,6 +123,7 @@ public class ChatMainFrame extends JFrame {
 		friendPanel.setLayout(null);
 		friendPanel.setBounds(75, 0, 315, 600);
 		
+		
 		// 친구 라벨 헤더
 		friendHeader = new JPanel();
 		friendHeader.setLayout(null);
@@ -139,113 +149,223 @@ public class ChatMainFrame extends JFrame {
 		frdPlusBtn.setContentAreaFilled(false);
 		
 		// 친구 리스트 나열
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(0, 69, 315, 531);
+		scrollPaneFriendList = new ScrollPane();
+		scrollPaneFriendList.setBounds(0, 69, 315, 531);
+		//scrollPaneFriendList.setBorder(null);
 		
 		textPaneFriendList = new JTextPane();
 		textPaneFriendList.setEditable(false); //입력은 불가하면서 텍스트 색상을 바꾸고 싶을때
 		textPaneFriendList.setBackground(Color.WHITE);
-		scrollPane.setViewportView(textPaneFriendList);
+		scrollPaneFriendList.add(textPaneFriendList);
+		//scrollPaneFriendList.setViewportView(textPaneFriendList);
 
 		friendHeader.add(friendLabel);
 		friendHeader.add(frdPlusBtn);
 
 		friendPanel.add(friendHeader);
-		friendPanel.add(scrollPane);
+		friendPanel.add(scrollPaneFriendList);
 		
 		
 		/*메세지 List Panel*/
-		messagePanel = new JPanel();
-		messagePanel.setLayout(null);
-		messagePanel.setBounds(75, 0, 315, 600);
-		messagePanel.setBackground(Color.BLUE);
+		msgPanel = new JPanel();
+		msgPanel.setLayout(null);
+		msgPanel.setBounds(75, 0, 315, 600);
+		msgPanel.setBackground(Color.BLUE);
+	
+		/*
+		// 친구 라벨 헤더
+		msgHeader = new JPanel();
+		msgHeader.setLayout(null);
+		msgHeader.setBounds(0, 0, 315, 68);
+		msgHeader.setBackground(Color.WHITE);
 		
+		msgLabel = new JLabel("채팅");
+		msgLabel.setFont(new Font("돋움", Font.BOLD, 20));
+		msgLabel.setBounds(15, 15, 50, 40);
+		
+		// 채팅 추가 버튼
+		// 채팅 추가 아이콘 변환
+		Image msgPlus_ori_img = msgPlus_img.getImage();
+		Image msgPlus_new_img = msgPlus_ori_img.getScaledInstance(20, 20, Image.SCALE_DEFAULT);
+		ImageIcon msgPlus_new_icon = new ImageIcon(msgPlus_new_img);
+		
+		msgPlusBtn = new JButton(msgPlus_new_icon);
+		msgPlusBtn.setEnabled(true);
+		msgPlusBtn.addActionListener(new MyActionListener());
+		msgPlusBtn.setBounds(245, 17, 35, 35);
+		msgPlusBtn.setFocusPainted(false);		
+		msgPlusBtn.setBorderPainted(false);
+		msgPlusBtn.setContentAreaFilled(false);
+		
+		// 채팅 리스트 나열
+		scrollPaneMsgList = new JScrollPane();
+		scrollPaneMsgList.setBounds(0, 69, 315, 531);
+		scrollPaneMsgList.setBorder(null);
+		
+		textPaneMsgList = new JTextPane();
+		textPaneMsgList.setEditable(false); //입력은 불가하면서 텍스트 색상을 바꾸고 싶을때
+		textPaneMsgList.setBackground(Color.WHITE);
+		scrollPaneMsgList.setViewportView(textPaneMsgList);
+
+		msgHeader.add(msgLabel);
+		msgHeader.add(msgPlusBtn);
+
+		msgPanel.add(msgHeader);
+		msgPanel.add(scrollPaneMsgList);
+		*/
 		
 		// 각각의 Panel 전체 Panel에 붙이기
 		contentPane.add(btnPanel);
 		contentPane.add(friendPanel);
-		contentPane.add(messagePanel);
+		contentPane.add(msgPanel);
+		
+		
+		/**/
+		Username = username;
+		UserIcon = standardProfile;
+		//User 본인
+		AttachFriend(standardProfile, Username, "O", "");
+		
+		/*로그인 처리*/ 
+		ChatMsg obcm = new ChatMsg(Username, "100", "Login");
+		obcm.UserStatus = "O";
+		obcm.UserStatusMsg = "";
+		obcm.profile = standardProfile;
+		SendObject(obcm);
+		
+		ListenNetwork net = new ListenNetwork();
+		net.start();
 	}
-		//Username = username;
-		
-//		try {
-//			socket = new Socket(ip_addr, Integer.parseInt(port_no));
-////			is = socket.getInputStream();
-////			dis = new DataInputStream(is);
-////			os = socket.getOutputStream();
-////			dos = new DataOutputStream(os);
-//			
-//			oos = new ObjectOutputStream(socket.getOutputStream());
-//			oos.flush();
-//			ois = new ObjectInputStream(socket.getInputStream());
-//			
-//			ChatMsg obcm = new ChatMsg(Username, "100", "Hello");
-//			obcm.setProfile(standardProfile);
-//			SendObject(obcm);
-//
-//			
-//		} catch(NumberFormatException | IOException e){
-//			
-//		}
-//	}
-		
 	
-//	/*친구들 프로필 사진 바꿀 때*/
-//	public void ChangeFriendProfile(ChatMsg cm) {
-//		profileFrame f = FriendLabelHash.get(cm.id);
-//		if(f == null) return;
-//
-//		f.SetIcon(cm);
-//		for(profileFrame f1: FriendLableList) {
-//			if(f1.name.equals(cm.id))
-//				f1.SetIcon(cm);
-//		}
-//	}
 	
-//	/*친구 리스트 임의로 만듦*/
-//	public void CreateFriendIconHash() {
-//		UserList.add("user1");
-//		UserList.add("user2");
-//		
-//		ChatMsg friend1 = new ChatMsg("user1", "600", "");
-//		friend1.setProfile(standardProfile);
-//		friend1.setStateMsg("첫번째 친구");
-//		
-//		ChatMsg friend2 = new ChatMsg("user2", "600", "");
-//		friend2.setProfile(standardProfile);
-//		friend2.setStateMsg("두번째 친구");
-//		
-//		((Map<String, ChatMsg>) FriendLabelHash).put(Username, friend1);
-//		((Map<String, ChatMsg>) FriendLabelHash).put(Username, friend2);
-//		
-//		
-//
-//		for(int i=0; i<FriendLabelHash.size(); i++) {
-//			ImageIcon icon = FriendLabelHash[i].ChatMsg.getProfile();
-//			profileFrame f = new profileFrame();
-//			FriendLabelHash.put(,f);
+	/**/
+	public Vector<profileFrame> FriendVector = new Vector<profileFrame>(); //친구 프로필 Vector
+	//public Vector<ChatRoom> ChatRoomVector = new Vector<ChatRoom>();
+	
+	/*AddFriend*/
+	public void AttachFriend(ImageIcon icon, String userName, String userStatus, String userStatusMsg) {
+		//맨 끝으로 이동 
+		int len = textPaneFriendList.getDocument().getLength();
+		textPaneFriendList.setCaretPosition(len); //place caret at the end (with no selection)
+		
+		
+		profileFrame f = new profileFrame(mainView, icon, userName, userStatus, userStatusMsg);
+		textPaneFriendList.insertComponent(f);
+		
+		
+		if(userName.equals(Username)) { //자기 자신 프로필 배경색으로 구분 
+			f.setBackground(Color.GRAY);
+			//f.setProfileButtonActive(); // 자신의 프로필 사진 변경할 수 있는 이벤트 
+			//f.setStatusChangeActive(); // 본인 상태 메세지 변경할 수 있는 이벤트
+		}
+		
+		//f.setProfileButtonActive(); // 프로필 변경, 프로필 확인 이벤트 활성화 
+		FriendVector.add(f);
+		textPaneFriendList.setCaretPosition(0);
+		repaint();
+	}
+	
+	/*친구찾기*/
+	public profileFrame SearchFriend(String name) {
+		for(profileFrame f: FriendVector) {
+			if(f.Username.equals(name)) 
+				return f;
+		}
+		return null;
+	}
+	
+	/*새로운 친구가 들어왔을때*/
+	public void LoginNewFriend(ChatMsg cm) {
+		for(profileFrame f: FriendVector) {
+			if(f.Username.equals(cm.id)) { //이미 로그인 되어 있는 유저 구분하기 위해 
+				if(cm.UserStatus.equals("O")) 
+					f.SetOnline(true);
+				else 
+					f.SetOnline(false);
+				
+				f.SetStatusMsg(cm);
+				return;
+			}
+		}
+		// for문 끝까지 돌려본 결과 이미 로그인 된 친구가 아닌 새로운 친구일 경우
+		AttachFriend(cm.img, cm.id, cm.UserStatus, cm.UserStatusMsg);
+	}
+	
+	/*친구가 로그아웃 했을경우*/ 
+	public void LogoutFriend(ChatMsg cm) {
+		for(profileFrame f: FriendVector) {
+			if(f.Username.equals(cm.id)) 
+				f.SetOnline(false);
+		}
+	}
+	
+	/*친구 프로필 사진*/
+	public ImageIcon getUserProfielIcon(String Username) {
+		for(profileFrame f: FriendVector) {
+			if(f.Username.equals(Username)) 
+				return f.UserprofileIcon;
+		}
+		return null;
+	}
+		
+	//프로필 사진 바꿀 때
+	public void ChangeFriendProfile(ChatMsg cm) {
+		UserIcon = cm.profile;
+		
+		for(profileFrame f: FriendVector) {
+			if(f.Username.equals(cm.id)) f.SetIcon(cm);
+		}
+		
+//		for(ChatRoom r: ChatRoomVector) {
+//			if(r.UserList.contains(cm.id)) r.ChangeFriendProfile(cm);
 //		}
-//	}	
-//	public ImageIcon GetUserIcon() {
-//		return UserIcon;
-//	}
+	}
+	
+	/*
+	//친구 리스트 임의로 만듦
+	public void CreateFriendIconHash() {
+		UserList.add("user1");
+		UserList.add("user2");
+		
+		ChatMsg friend1 = new ChatMsg("user1", "600", "");
+		friend1.setProfile(standardProfile);
+		friend1.setStateMsg("첫번째 친구");
+		
+		ChatMsg friend2 = new ChatMsg("user2", "600", "");
+		friend2.setProfile(standardProfile);
+		friend2.setStateMsg("두번째 친구");
+		
+		((Map<String, ChatMsg>) FriendLabelHash).put(Username, friend1);
+		((Map<String, ChatMsg>) FriendLabelHash).put(Username, friend2);
+		
+		
+
+		for(int i=0; i<FriendLabelHash.size(); i++) {
+			ImageIcon icon = FriendLabelHash[i].ChatMsg.getProfile();
+			profileFrame f = new profileFrame();
+			FriendLabelHash.put(,f);
+		}
+	}	
+	public ImageIcon GetUserIcon() {
+		return UserIcon;
+	}
 	
 		
-//	/*친구 목록 textArea에 붙이기*/
-//	public void AppendList(ChatMsg cm) {
-//		profileFrame f1 = FriendLabelHash.get(cm.id);
-//		profileFrame f2 = new profileFrame(f1.UserIcon, f1.UserName);
-//		FriendLabelList.add(f2);
-//		
-//		textPaneFriendList.setCaretPosition(textPaneFriendList.getDocument().getLength());
-//		textPaneFriendList.insertComponent(f2);
-//		
-//		int len = textPaneFriendList.getDocument().getLength();
-//		textPaneFriendList.setCaretPosition(len);
-//	}
-//	
+	//친구 목록 textArea에 붙이기
+	public void AppendList(ChatMsg cm) {
+		profileFrame f1 = FriendLabelHash.get(cm.id);
+		profileFrame f2 = new profileFrame(f1.UserIcon, f1.UserName);
+		FriendLabelList.add(f2);
 		
-	/*서버로 메세지를 보내는 메소드*/
+		textPaneFriendList.setCaretPosition(textPaneFriendList.getDocument().getLength());
+		textPaneFriendList.insertComponent(f2);
+		
+		int len = textPaneFriendList.getDocument().getLength();
+		textPaneFriendList.setCaretPosition(len);
+	}
+	*/
+		
+	//서버로 메세지를 보내는 메소드*
 	public void SendObject(Object ob) { 
 		try {
 			oos.writeObject(ob);
@@ -254,71 +374,79 @@ public class ChatMainFrame extends JFrame {
 			//AppendText("SendObject Error", check);
 		}
 	}
-
-//	/*Server Message를 수신해서 화면에 표시*/
-//	class ListenNetwork extends Thread {
-//		public void run() {
-//			while (true) {
-//				try {
-//
-//					Object obcm = null;
-//					String msg = null;
-//					ChatMsg cm;
-//					try {
-//						obcm = ois.readObject();
-//					} catch (ClassNotFoundException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//						break;
-//					}
-//					if (obcm == null)
-//						break;
-//					if (obcm instanceof ChatMsg) {
-//						cm = (ChatMsg) obcm;
-//						msg = String.format("[%s]\n%s", cm.id, cm.data);
-//					} else
-//						continue;
-//					switch (cm.code) {
-//					case "200": // chat message
-//						if (cm.id.equals(Username))
-//							System.out.println(msg);
-//							//AppendTextR(msg); // 내 메세지는 우측에
-//						else
-//							System.out.println("msg");
-//							//AppendText(msg);
-//						break;
-//					case "300": // Image 첨부
-//						if (cm.id.equals(Username))
-//							System.out.println(cm.id);
-//							//AppendTextR("[" + cm.id + "]");
-//						else
-//							System.out.println(cm.id);
-//							//AppendText("[" + cm.id + "]");
-//						//AppendImage(cm.img);
-//						break;
-//					case "500": // Mouse Event 수신
-//						//drawing.DoMouseEvent(cm);
-//						break;
-//					}
-//				} catch (IOException e) {
-//					//AppendText("ois.readObject() error");
-//					try {
-////						dos.close();
-////						dis.close();
-//						ois.close();
-//						oos.close();
-//						socket.close();
-//
-//						break;
-//					} catch (Exception ee) {
-//						break;
-//					} // catch문 끝
-//				} // 바깥 catch문끝
-//
-//			}
-//		}
-//	}
 	
+
+	//Server Message를 수신해서 화면에 표시
+	class ListenNetwork extends Thread {
+		public void run() {
+			while (true) {
+				try {
+					Object obcm = null;
+					String msg = null;
+					ChatMsg cm;
+					
+					try {
+						obcm = ois.readObject();
+					} catch (ClassNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						break;
+					}
+					
+					if (obcm == null)
+						break;
+						
+					if (obcm instanceof ChatMsg) {
+						cm = (ChatMsg) obcm;
+						msg = String.format("[%s]\n%s", cm.id, cm.data);
+					} else
+						continue;
+						
+					switch (cm.code) {
+					case "100": //New User Login, 새로운 친구 입장
+						LoginNewFriend(cm);
+						break;
+					case "200": // chat message
+						if (cm.id.equals(Username))
+							System.out.println(msg);
+							//AppendTextR(msg); // 내 메세지는 우측에
+						else
+							System.out.println("msg");
+							//AppendText(msg);
+						break;
+					case "300": // Image 첨부
+						if (cm.id.equals(Username))
+							System.out.println(cm.id);
+							//AppendTextR("[" + cm.id + "]");
+						else
+							System.out.println(cm.id);
+							//AppendText("[" + cm.id + "]");
+						//AppendImage(cm.img);
+						break;
+					case "500": // Mouse Event 수신
+						//drawing.DoMouseEvent(cm);
+						break;
+					}
+				} catch (IOException e) {
+					//AppendText("ois.readObject() error");
+					try {
+//						dos.close();
+//						dis.close();
+						ois.close();
+						oos.close();
+						socket.close();
+
+						break;
+					} catch (Exception ee) {
+						break;
+					} // catch문 끝
+				} // 바깥 catch문끝
+
+			}
+		}
+	}
+
+
 	
 	/*클릭 이벤트 리스너*/
 	 class MyActionListener implements ActionListener{
@@ -332,7 +460,7 @@ public class ChatMainFrame extends JFrame {
 				   moreBtn.setEnabled(true);  
 				   
 				   friendPanel.setVisible(true); //친구창 보이게
-				   messagePanel.setVisible(false);
+				   msgPanel.setVisible(false);
 
 			   }else if(e.getSource() == msgBtn){ // 메세지 리스트 창 버튼
 				   frdBtn.setEnabled(true);
@@ -340,15 +468,15 @@ public class ChatMainFrame extends JFrame {
 				   moreBtn.setEnabled(true);
 				   
 				   friendPanel.setVisible(false);
-				   messagePanel.setVisible(true); //메세지창 보이게
+				   msgPanel.setVisible(true); //메세지창 보이게
 				   
 			   }else if(e.getSource() == moreBtn) { // 더보기 버튼
-				   frdBtn.setEnabled(true); 
-				   msgBtn.setEnabled(false); 
+				   frdBtn.setEnabled(true);
+				   msgBtn.setEnabled(true); 
 				   moreBtn.setEnabled(false); //더보기 버튼 진하게
 				   
 				   friendPanel.setVisible(false);
-				   messagePanel.setVisible(true);
+				   msgPanel.setVisible(true);
 				   
 			   }else if(e.getSource() == frdPlusBtn) { // 친구 추가 버튼
 				   

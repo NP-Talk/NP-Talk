@@ -1,17 +1,21 @@
 // ChatMsg.java 채팅 메시지 ObjectStream 용.
 import java.io.Serializable;
+import java.sql.Date;
+
 import javax.swing.ImageIcon;
 
 class ChatMsg implements Serializable {
 	private static final long serialVersionUID = 1L;
 	public String id;
 	public String code; // 100:로그인, 400:로그아웃, 200:채팅메시지, 300:Image
-	public String data;
-	public ImageIcon img;
+	public String data; //채팅 메세지 
+	public String UserStatus; //유저 online 상태 
+	public String UserStatusMsg; //유저 상태메세지 
+	public Date date; //마지막으로 보낸 채팅 시간
 	
-	//private String username;
-	private String stateMsg; //상태메세지
-	private ImageIcon profile; //프로필사진
+	public ImageIcon img; //주고받는 사진 
+	public ImageIcon profile; //프로필사진
+	
 
 	public ChatMsg(String id, String code, String msg) {
 		this.id = id;
@@ -35,7 +39,7 @@ class ChatMsg implements Serializable {
 		return id;
 	}
 
-	//유저 ID
+	//유저 ID = 이름 
 	public void setId(String id) {
 		this.id = id;
 	}
@@ -48,22 +52,14 @@ class ChatMsg implements Serializable {
 		this.img = img;
 	}
 	
-	/*
-	// 유저 이름
-	public String getUsername() {
-		return username;
-	}
-	public void setUsername(String username) {
-		this.username = username;
-	}
-	*/
+
 	
 	// 유저 프로필 상태 메세지
-	public String getStateMsg() {
-		return stateMsg;
+	public String getUserStatusMsg() {
+		return UserStatusMsg;
 	}
-	public void setStateMsg(String stateMsg) {
-		this.stateMsg = stateMsg;
+	public void setUserStatusMsg(String UserStatusMsg) {
+		this.UserStatusMsg = UserStatusMsg;
 	}
 	
 	// 유저 프로필 이미지
@@ -73,4 +69,13 @@ class ChatMsg implements Serializable {
 	public void setProfile(ImageIcon profile) {
 		this.profile = profile;
 	}
+	
+	//유저 채팅 메세지 시간
+	public void setDate(Date date) {
+		this.date = date;
+	}
+	public Date getDate() {
+		return date;
+	}
+	
 }
