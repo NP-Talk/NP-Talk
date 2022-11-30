@@ -4,13 +4,9 @@ import javax.swing.ImageIcon;
 
 public class ProfileInfo implements Serializable{
 	private static final long serialVersionUID = 1L;
-	// 사용자 id
 	private String username; 
-	// 프로필 사진 
 	private ImageIcon profileImg = new ImageIcon(ProfileInfo.class.getResource("./img/standardProfile.png"));
-	// 배경 사진 
 	private ImageIcon backgroundImg = new ImageIcon(ProfileInfo.class.getResource("./img/greyBack.jpeg"));
-	// 상태 메시지
 	private String stateMsg;
 	
 	public ProfileInfo(String username) {

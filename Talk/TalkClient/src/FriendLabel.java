@@ -9,36 +9,44 @@ import javax.swing.JTextPane;
 import javax.swing.SpringLayout;
 import javax.swing.JTextField;
 import java.awt.Color;
+import java.awt.Font;
+import javax.swing.BoxLayout;
+import java.awt.GridLayout;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 
 public class FriendLabel extends JPanel{
+	private static final long serialVersionUID = 1L;
 	private final JTextPane textPane = new JTextPane();
 	public JButton profile;
-	JLabel msg;
-	ImageIcon profileImg = null;
+	public JLabel chatmsg;
+	public String UserName = "test";
+	public ImageIcon UserImg = new ImageIcon(FriendLabel.class.getResource("./img/standardProfile.png"));
 	
-	public FriendLabel(String username, String chatmsg) {
+	public FriendLabel(ImageIcon userImg, String username) {
+		UserImg = userImg;
+		UserName = username;
+		
 		setBackground(new Color(147, 208, 250));
-		SpringLayout springLayout = new SpringLayout();
-		setLayout(springLayout);
+		setLayout(null);
 		
-		//profileImg = imageSetSize(img, 56, 56);
-		
-		profile = new JButton(profileImg);
-		springLayout.putConstraint(SpringLayout.NORTH, profile, 6, SpringLayout.NORTH, this);
-		springLayout.putConstraint(SpringLayout.WEST, profile, 6, SpringLayout.WEST, this);
-		springLayout.putConstraint(SpringLayout.SOUTH, profile, 56, SpringLayout.NORTH, this);
-		springLayout.putConstraint(SpringLayout.EAST, profile, 56, SpringLayout.WEST, this);
+		UserImg = imageSetSize(UserImg, 56, 56);
+		profile = new JButton(UserImg);
+		profile.setBounds(1, 5, 40, 40);
 		add(profile);
 		
-		JLabel name = new JLabel(username);
-		springLayout.putConstraint(SpringLayout.NORTH, name, 10, SpringLayout.NORTH, this);
-		springLayout.putConstraint(SpringLayout.WEST, name, 6, SpringLayout.EAST, profile);
+		JLabel name = new JLabel(UserName);
+		name.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
+		name.setBounds(45, 5, 40, 40);
+		name.setSize(120, 20);
 		add(name);
 		
-		msg = new JLabel(chatmsg);
-		springLayout.putConstraint(SpringLayout.NORTH, msg, 6, SpringLayout.SOUTH, name);
-		springLayout.putConstraint(SpringLayout.WEST, msg, 6, SpringLayout.EAST, profile);
-		add(msg);
+		chatmsg = new JLabel("");
+		chatmsg.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
+		chatmsg.setBounds(45, 25, 40, 40);
+		chatmsg.setSize(120, 20);
+		add(chatmsg);
 	}
 	
 	public ImageIcon imageSetSize(ImageIcon icon, int i, int j) { // image Size Setting

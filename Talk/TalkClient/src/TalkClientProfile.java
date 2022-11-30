@@ -13,6 +13,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.time.LocalTime;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -61,14 +62,21 @@ public class TalkClientProfile extends JFrame{
 	private ObjectOutputStream oos;
 	//private ConnectTest ct;
 	
+	private LocalTime now = LocalTime.now();
+	private int hour = now.getHour();
+    private int minute = now.getMinute();
+    private String ampm = "오전";
+    String time = ampm + " " + hour + ":" + minute + " ";
+    //TalkClientChatRoomView roomView = new TalkClientChatRoomView();
+	
 	/**
 	 * Create the frame.
 	 */
 	public TalkClientProfile(String username, String ip_addr, String port_no) {
 		
-		System.out.println("ip_addr : " + ip_addr + " port_no : " + port_no);
-		UserInfo dbUser = new UserInfo(username, "Hi");
-		//ct = new ConnectTest(dbUser.getId(), dbUser.getStateMsg());
+		//System.out.println("ip_addr : " + ip_addr + " port_no : " + port_no);
+		
+		this.UserName = username;
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 394, 630);
@@ -82,7 +90,7 @@ public class TalkClientProfile extends JFrame{
 		selfChatButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-				new TalkClientRoom(username, ip_addr, port_no);
+				//new ChatClientChatRoomView(username, ip_addr, port_no);
 				//new TalkClientSelfRoom(username, socket, ois, oos);
 			}
 		});
@@ -164,6 +172,7 @@ public class TalkClientProfile extends JFrame{
 		
 		this.UserName = username;
 		
+		/*
 		try {
 			socket = new Socket(ip_addr, Integer.parseInt(port_no));
 			//socket = new Socket("127.0.0.1", 3000);
@@ -186,7 +195,7 @@ public class TalkClientProfile extends JFrame{
 			e.printStackTrace();
 			System.out.println("connect error");
 		}
-
+		*/
 
 	}
 	
@@ -212,14 +221,14 @@ public class TalkClientProfile extends JFrame{
 				       cm = (ChatMsg) obcm;
 				       
 				       // 내가 채팅 보낼떄 오른쪽
-				       if(cm.getId().equals(UserName)) {
+				       if(cm.UserName.equals(UserName)) {
 				    	   check = true;
 				       }
 				       else {
 				           check = false;
 				       }
 				       
-				       msg = String.format("[%s] %s", cm.getId(), cm.getData());
+				       msg = String.format("[%s] %s", cm.UserName, cm.data);
 					} 
 					else
 						continue;

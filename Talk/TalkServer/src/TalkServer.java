@@ -40,7 +40,17 @@ public class TalkServer extends JFrame {
 	private Socket client_socket; // accept() 에서 생성된 client 소켓
 	private Vector UserVec = new Vector(); // 연결된 사용자를 저장할 벡터
 	private static final int BUF_LEN = 128; // Windows 처럼 BUF_LEN 을 정의
-
+	
+	private Vector<ChatRoom> ChatRoomVector = new Vector();
+	Vector<UserInfo> Users = new Vector<UserInfo>();
+	UserInfo userInfo;
+	
+	UserInfo u1 = new UserInfo("user1", "50");
+	UserInfo u2 = new UserInfo("user2", "50");
+	UserInfo u3 = new UserInfo("user3", "50");
+	UserInfo u4 = new UserInfo("user4", "50");
+	UserInfo u5 = new UserInfo("user5", "50");
+	
 	/**
 	 * Launch the application.
 	 */
@@ -61,6 +71,12 @@ public class TalkServer extends JFrame {
 	 * Create the frame.
 	 */
 	public TalkServer() {
+		Users.add(u1);
+		Users.add(u2);
+		Users.add(u3);
+		Users.add(u4);
+		Users.add(u5);
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 338, 440);
 		contentPane = new JPanel();
@@ -119,6 +135,11 @@ public class TalkServer extends JFrame {
 					AppendText("새로운 참가자 from " + client_socket);
 					// User 당 하나씩 Thread 생성
 					UserService new_user = new UserService(client_socket);
+					/*
+					for(int i = 0; i < UserVec.size(); i++) {
+						if(UserVec.get(i).equals(new_user))
+					}
+					*/
 					UserVec.add(new_user); // 새로운 참가자 배열에 추가
 					new_user.start(); // 만든 객체의 스레드 실행
 					AppendText("현재 참가자 수 " + UserVec.size());
@@ -136,20 +157,12 @@ public class TalkServer extends JFrame {
 		textArea.setCaretPosition(textArea.getText().length());
 	}
 
-	/*
-	public void AppendObject(UserInfo userInfo) {
-		// textArea.append("사용자로부터 들어온 object : " + str+"\n");
-		textArea.append("code = " + userInfo.getCode() + "\n");
-		textArea.append("id = " + userInfo.getId() + "\n");
-		textArea.append("data = " + userInfo.getData() + "\n");
-		textArea.setCaretPosition(textArea.getText().length());
-	}
-	*/
 	public void AppendObject(ChatMsg chatMsg) {
 		// textArea.append("사용자로부터 들어온 object : " + str+"\n");
-		textArea.append("code = " + chatMsg.getCode() + "\n");
-		textArea.append("id = " + chatMsg.getId() + "\n");
-		textArea.append("data = " + chatMsg.getData() + "\n");
+		textArea.append("code = " + chatMsg.code + "\n");
+		textArea.append("id = " + chatMsg.UserName + "\n");
+		textArea.append("data = " + chatMsg.data + "\n");
+		textArea.append("img = " + chatMsg.img + "\n");
 		textArea.setCaretPosition(textArea.getText().length());
 	}
 
@@ -175,36 +188,22 @@ public class TalkServer extends JFrame {
 			this.client_socket = client_socket;
 			this.user_vc = UserVec;
 			try {
-//				is = client_socket.getInputStream();
-//				dis = new DataInputStream(is);
-//				os = client_socket.getOutputStream();
-//				dos = new DataOutputStream(os);
-
 				oos = new ObjectOutputStream(client_socket.getOutputStream());
 				oos.flush();
 				ois = new ObjectInputStream(client_socket.getInputStream());
-
-				// line1 = dis.readUTF();
-				// /login user1 ==> msg[0] msg[1]
-//				byte[] b = new byte[BUF_LEN];
-//				dis.read(b);		
-//				String line1 = new String(b);
-//
-//				//String[] msg = line1.split(" ");
-//				//UserName = msg[1].trim();
-//				UserStatus = "O"; // Online 상태
-//				Login();
 			} catch (Exception e) {
 				AppendText("userService error");
 			}
 		}
 
 		public void Login() {
-			AppendText("새로운 참가자 " + UserName + " 입장.");
-			WriteOne("Welcome to Java chat server\n");
-			WriteOne(UserName + "님 환영합니다.\n"); // 연결된 사용자에게 정상접속을 알림
-			String msg = "[" + UserName + "]님이 입장 하였습니다.\n";
-			WriteOthers(msg); // 아직 user_vc에 새로 입장한 user는 포함되지 않았다.
+			AppendText(UserName + "로그인");
+			//WriteOne("Welcome to Java chat server\n");
+			//WriteOne(UserName + "님 환영합니다.\n"); // 연결된 사용자에게 정상접속을 알림
+			//String msg = "[" + UserName + "]님이 입장 하였습니다.\n";
+			//WriteOthers(msg); // 아직 user_vc에 새로 입장한 user는 포함되지 않았다.
+			//WriteAllObject(new ChatMsg(UserName, "200", "hello"));
+			//SendUsers();
 		}
 
 		public void Logout() {
@@ -259,19 +258,32 @@ public class TalkServer extends JFrame {
 		}
 
 		// UserService Thread가 담당하는 Client 에게 1:1 전송
+		public void SendUsers() {
+			try {
+				oos.writeObject(Users);
+			} catch (IOException e) {
+				AppendText("dos.writeObject() error");
+				try {
+					ois.close();
+					oos.close();
+					client_socket.close();
+					client_socket = null;
+					ois = null;
+					oos = null;
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				Logout(); // 에러가난 현재 객체를 벡터에서 지운다
+			}
+		}
 		public void WriteOne(String msg) {
 			try {
-				// dos.writeUTF(msg);
-//				byte[] bb;
-//				bb = MakePacket(msg);
-//				dos.write(bb, 0, bb.length);
 				ChatMsg obcm = new ChatMsg("SERVER", "200", msg);
 				oos.writeObject(obcm);
 			} catch (IOException e) {
 				AppendText("dos.writeObject() error");
 				try {
-//					dos.close();
-//					dis.close();
 					ois.close();
 					oos.close();
 					client_socket.close();
@@ -350,12 +362,12 @@ public class TalkServer extends JFrame {
 						AppendObject(cm);
 					} else
 						continue;
-					if (cm.getCode().matches("100")) {
-						UserName = cm.getId();
+					if (cm.code.matches("100")) {
+						UserName = cm.UserName;
 						UserStatus = "O"; // Online 상태
 						Login();
-					} else if (cm.getCode().matches("200")) {
-						msg = String.format("[%s] %s", cm.getId(), cm.getData());
+					} else if (cm.code.matches("200")) {
+						msg = String.format("[%s] %s", cm.UserName, cm.data);
 						AppendText(msg); // server 화면에 출력
 						String[] args = msg.split(" "); // 단어들을 분리한다.
 						if (args.length == 1) { // Enter key 만 들어온 경우 Wakeup 처리만 한다.
@@ -397,19 +409,18 @@ public class TalkServer extends JFrame {
 							//WriteAll(msg + "\n"); // Write All
 							WriteAllObject(cm);
 						}
-					} else if (cm.getCode().matches("400")) { // logout message 처리
+					} else if (cm.code.matches("400")) { // logout message 처리
 						Logout();
 						break;
-					} else if (cm.getCode().matches("300")) {
+					} else if (cm.code.matches("300")) {
 						WriteAllObject(cm);
-					} else if(cm.getCode().matches("0")) {
+						
+					} else if(cm.code.matches("800")) {
 						
 					}
 				} catch (IOException e) {
 					AppendText("ois.readObject() error" + e);
 					try {
-//						dos.close();
-//						dis.close();
 						ois.close();
 						oos.close();
 						client_socket.close();
@@ -421,102 +432,19 @@ public class TalkServer extends JFrame {
 				} // 바깥 catch문끝
 			} // while
 		} // run
-		/*
-		public void run() {
-			while (true) { // 사용자 접속을 계속해서 받기 위해 while문
-				try {
-					Object obui = null;
-					String msg = null;
-					UserInfo ui = null;
-					
-					if (socket == null)
-						break;
-					try {
-						obui = ois.readObject();
-					} catch (ClassNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						return;
-					}
-					if (obui == null)
-						break;
-					if (obui instanceof UserInfo) {
-						ui = (UserInfo) obui;
-						AppendObject(ui);
-					} else
-						continue;
-					if (ui.getCode().matches("100")) {
-						UserName = ui.getId();
-						UserStatus = "O"; // Online 상태
-						Login();
-					} else if (ui.getCode().matches("200")) {
-						msg = String.format("[%s] %s", ui.getId(), ui.getData());
-						AppendText(msg); // server 화면에 출력
-						String[] args = msg.split(" "); // 단어들을 분리한다.
-						if (args.length == 1) { // Enter key 만 들어온 경우 Wakeup 처리만 한다.
-							UserStatus = "O";
-						} else if (args[1].matches("/exit")) {
-							Logout();
-							break;
-						} else if (args[1].matches("/list")) {
-							WriteOne("User list\n");
-							WriteOne("Name\tStatus\n");
-							WriteOne("-----------------------------\n");
-							for (int i = 0; i < user_vc.size(); i++) {
-								UserService user = (UserService) user_vc.elementAt(i);
-								WriteOne(user.UserName + "\t" + user.UserStatus + "\n");
-							}
-							WriteOne("-----------------------------\n");
-						} else if (args[1].matches("/sleep")) {
-							UserStatus = "S";
-						} else if (args[1].matches("/wakeup")) {
-							UserStatus = "O";
-						} else if (args[1].matches("/to")) { // 귓속말
-							for (int i = 0; i < user_vc.size(); i++) {
-								UserService user = (UserService) user_vc.elementAt(i);
-								if (user.UserName.matches(args[2]) && user.UserStatus.matches("O")) {
-									String msg2 = "";
-									for (int j = 3; j < args.length; j++) {// 실제 message 부분
-										msg2 += args[j];
-										if (j < args.length - 1)
-											msg2 += " ";
-									}
-									// /to 빼고.. [귓속말] [user1] Hello user2..
-									user.WritePrivate(args[0] + " " + msg2 + "\n");
-									//user.WriteOne("[귓속말] " + args[0] + " " + msg2 + "\n");
-									break;
-								}
-							}
-						} else { // 일반 채팅 메시지
-							UserStatus = "O";
-							//WriteAll(msg + "\n"); // Write All
-							WriteAllObject(ui);
-						}
-					} else if (ui.getCode().matches("400")) { // logout message 처리
-						Logout();
-						break;
-					} else if (ui.getCode().matches("300")) {
-						WriteAllObject(ui);
-					} else if(ui.getCode().matches("0")) {
-						
-					}
-				} catch (IOException e) {
-					AppendText("ois.readObject() error" + e);
-					try {
-//						dos.close();
-//						dis.close();
-						ois.close();
-						oos.close();
-						client_socket.close();
-						Logout(); // 에러가난 현재 객체를 벡터에서 지운다
-						break;
-					} catch (Exception ee) {
-						break;
-					} // catch문 끝
-				} // 바깥 catch문끝
-			} // while
-		} // run
-		*/
+		
+		
+		
+		public void AddChatRoom(ChatMsg cm) {
+			
+		}
+		
+		public ChatRoom SearchChatRoom(String roomId) {
+			for(ChatRoom r : ChatRoomVector) {
+				if(r.roomId.equals(roomId))
+					return r;
+			}
+			return null;
+		}
 	}
-
 }
