@@ -1,30 +1,15 @@
 //JavaObjServer.java ObjectStream ±â¹Ý Ã¤ÆÃ Server
 
 import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.Vector;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingConstants;
+import java.awt.event.ActionListener;
+
+import javax.swing.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
 public class TalkServer extends JFrame {
 
@@ -394,8 +379,75 @@ public class TalkServer extends JFrame {
 							}
 						} else { // ÀÏ¹Ý Ã¤ÆÃ ¸Þ½ÃÁö
 							UserStatus = "O";
-							//WriteAll(msg + "\n"); // Write All
+							
+							String data = cm.getData();
+							String first_data = data.substring(0, 1); //Ã³À½±ÛÀÚ "("
+							String final_data = data.substring(data.length()-1, data.length()); //¸¶Áö¸·±ÛÀÚ ")"
+														
+							String[] emojiList = {"(°ï¶õ)", "(±Ã±Ý)", "(±ôÂï)", "(³î¶÷)", "(´«¹°)",
+									"(´çÈ²)", "(¸Þ·Õ)", "(¹Ì¼Ò)", "(¹Î¸Á)", "(¹ÝÇÔ)",
+									"(¹ö·°)", "(ºÎ²ô)", "(¾ÆÇÄ)", "(¾Èµµ)", "(¿ìÀ¡)",
+									"(À®Å©)", "(À¸À¸)", "(Àß³­Ã´)", "(ÀßÀÚ)", "(Àá)"};
+							ImageIcon[] emojiIconList = {
+									new ImageIcon("src/emoji/°ï¶õ.png"),
+									new ImageIcon("src/emoji/±Ã±Ý.png"),
+									new ImageIcon("src/emoji/±ôÂï.png"),
+									new ImageIcon("src/emoji/³î¶÷.png"),
+									new ImageIcon("src/emoji/´«¹°.png"),
+									new ImageIcon("src/emoji/´çÈ².png"),
+									new ImageIcon("src/emoji/¸Þ·Õ.png"),
+									new ImageIcon("src/emoji/¹Ì¼Ò.png"),
+									new ImageIcon("src/emoji/¹Î¸Á.png"),
+									new ImageIcon("src/emoji/¹ÝÇÔ.png"),
+									new ImageIcon("src/emoji/¹ö·°.png"),
+									new ImageIcon("src/emoji/ºÎ²ô.png"),
+									new ImageIcon("src/emoji/¾ÆÇÄ.png"),
+									new ImageIcon("src/emoji/¾Èµµ.png"),
+									new ImageIcon("src/emoji/¿ìÀ¡.png"),
+									new ImageIcon("src/emoji/À®Å©.png"),
+									new ImageIcon("src/emoji/À¸À¸.png"),
+									new ImageIcon("src/emoji/Àß³­Ã´.png"),
+									new ImageIcon("src/emoji/ÀßÀÚ.png"),
+									new ImageIcon("src/emoji/Àá.png"),
+							};
+							
+							
+							for(int i=0; i<emojiList.length; i++) {
+								if(data.equals(emojiList[i])) {
+									cm.setImg(emojiIconList[i]);
+									cm.setCode("300");
+								}
+							}
 							WriteAllObject(cm);
+							
+							
+/*							
+							if(first_data.equals("(") && final_data.equals(")")) {
+								for(int i=0; i<emojiList.length; i++) {
+									if(data.equals(emojiList[i])) {
+										cm.setImg(emojiIconList[i]);
+										cm.setCode("300");
+										WriteAllObject(cm);
+									}
+									else {
+										WriteAllObject(cm);
+										
+									}
+										
+							
+								}
+							}
+							else {
+								AppendText("message original"); //AppendText
+								WriteAllObject(cm);
+	
+							}
+*/							
+							//WriteAll(msg + "\n"); // Write All
+							/*
+							AppendText("message original"); //AppendText
+							WriteAllObject(cm);
+							*/
 						}
 					} else if (cm.getCode().matches("400")) { // logout message Ã³¸®
 						Logout();

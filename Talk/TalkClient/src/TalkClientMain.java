@@ -1,5 +1,5 @@
 // JavaObjClient.java
-// ObjecStream ����ϴ� ä�� Client
+// ObjecStream 占쏙옙占쏙옙求占� 채占쏙옙 Client
 
 import java.awt.EventQueue;
 
@@ -102,20 +102,24 @@ public class TalkClientMain extends JFrame {
 		//txtIpAddress.addActionListener(action);
 		//txtPortNumber.addActionListener(action);
 	}
-	class Myaction implements ActionListener // ����Ŭ������ �׼� �̺�Ʈ ó�� Ŭ����
+	class Myaction implements ActionListener // 占쏙옙占쏙옙클占쏙옙占쏙옙占쏙옙 占쌓쇽옙 占싱븝옙트 처占쏙옙 클占쏙옙占쏙옙
 	{
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			//String username = txtUserName.getText().trim();
-			//String ip_addr = txtIpAddress.getText().trim();
-			//String port_no = txtPortNumber.getText().trim();
 			String username = txtUserName.getText().trim();
 			String ip_addr = "127.0.0.1";
 			String port_no = "30000";
+
+			//String username = txtUserName.getText().trim();
+			//String ip_addr = txtIpAddress.getText().trim();
+			//String port_no = txtPortNumber.getText().trim();
+			
 			//TalkClientList list = new TalkClientList(username, ip_addr, port_no);
 			//TalkClientProfile profile = new TalkClientProfile(username, ip_addr, port_no);
 			//TalkClientRoom room = new TalkClientRoom(username, ip_addr, port_no);
-			ChatMainFrame chatMain = new ChatMainFrame(username, ip_addr, port_no);
+			
+			//ChatMainFrame chatMain = new ChatMainFrame(username, ip_addr, port_no);
+			ChatClientChatRoomView chatroom = new ChatClientChatRoomView(username, ip_addr, port_no);
 			setVisible(false);
 		}
 	}
